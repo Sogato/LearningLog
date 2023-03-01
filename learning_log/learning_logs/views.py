@@ -1,3 +1,23 @@
 from django.shortcuts import render
 
-# Create your views here.
+from .models import Topic
+
+
+def index(request):
+    """Домашняя страница приложения Learning Log"""
+    return render(request, 'learning_logs/index.html')
+
+
+def topics(request):
+    """Выводит список тем."""
+    topics_all = Topic.objects.order_by('date_added')
+    context = {'topics': topics_all}
+    return render(request, 'learning_logs/topics.html', context)
+
+
+def topic(request, topic_id):
+    """Выводит одну тему и все ее записи."""
+    topic_object = Topic.objects.get(id=topic_id)
+    entries = topic_object.entry_set.order_by('-date_added')
+    context = {'topics': topic_object, 'entries': entries}
+    return render(request, 'learning_logs/topic.html', context)
